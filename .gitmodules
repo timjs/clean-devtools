@@ -1,0 +1,8 @@
+[submodule "Dependencies/clean-platform"]
+	path = Dependencies/clean-platform
+	url = https://gitlab.science.ru.nl/clean-and-itasks/clean-platform.git
+	branch = tim-experimental
+[submodule "Dependencies/clean-compiler"]
+	path = Dependencies/clean-compiler
+	url = https://gitlab.science.ru.nl/clean-and-itasks/clean-compiler.git
+	branch = itask

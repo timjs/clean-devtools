@@ -1,7 +1,7 @@
 implementation module Clean.Parser
 
 import Data.Result
-import Data.File
+import System.File.Experimental
 import System.FilePath
 
 from StdFile import :: Files, class FileEnv(accFiles), instance FileEnv World
