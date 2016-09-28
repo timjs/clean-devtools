@@ -1,5 +1,6 @@
 definition module Clean.Parser
 
+from Data.Maybe import :: Maybe
 from Data.Result import :: Result, :: Usually, :: Error
 from System.FilePath import :: FilePath
 
@@ -16,7 +17,9 @@ from compile import :: DclCache
     | PostparseError
 
 initDclCache :: !*World -> *(*DclCache, *World)
+makeSearchPaths :: [FilePath] -> SearchPaths
 
 preparseModule :: !FilePath !*DclCache !*World -> (Usually ParsedModule, *DclCache, *World)
-// postparseModule ::
-// parseModule :: !FilePath !*DclCache !*World -> (Usually ScannedModule, *DclCache, *World)
+postparseModule :: ParsedModule SearchPaths !*DclCache !*World -> (Usually (ScannedModule, Maybe ScannedModule, [ScannedModule]), *DclCache, *World)
+
+parseModule :: !FilePath SearchPaths !*DclCache !*World -> (Usually (ScannedModule, Maybe ScannedModule, [ScannedModule]), *DclCache, *World)
