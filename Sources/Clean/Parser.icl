@@ -3,6 +3,7 @@ implementation module Clean.Parser
 import Data.Maybe
 import Data.Result
 import System.File.Experimental
+
 import System.FilePath
 
 from StdFile import :: Files, class FileEnv(accFiles), instance FileEnv World, instance FileSystem Files
@@ -74,7 +75,9 @@ from utilities import :: Optional(..)
 
 from filesystem import fmodificationtime
 
+
 /// # Macros
+
 
 initWithPredefinedIdentifiers h w :== init_identifiers h w
 makeEmptyCacheOf h :== empty_cache h
@@ -115,7 +118,9 @@ toMaybe optional :==
         Yes value -> Just value
         No -> Nothing
 
+
 /// # Cache
+
 
 initDclCache :: !*World -> *(*DclCache, *World)
 initDclCache world
@@ -123,11 +128,16 @@ initDclCache world
     # dclCache = makeEmptyCacheOf symbolTable
     = (dclCache, world)
 
+
+/// # Search Paths
+
+
 makeSearchPaths :: [FilePath] -> SearchPaths
 makeSearchPaths filepaths =
 	{ sp_locations = []
 	, sp_paths = filepaths
 	}
+
 
 /// # Parse
 
@@ -138,8 +148,8 @@ emptyModificationTime :== ""
 emptyCachedModuleIdents :== []
 
 
-preparseModule :: !FilePath !*DclCache !*World -> (Usually ParsedModule, *DclCache, *World)
-preparseModule modulePath dclCache world
+parseModule :: !FilePath !*DclCache !*World -> (Usually ParsedModule, *DclCache, *World)
+parseModule modulePath dclCache world
 
     # (result, world) = openFile modulePath ReadMode world
     | isErr result =
@@ -156,7 +166,7 @@ preparseModule modulePath dclCache world
     # ((ok, useDynamics, parsedModule, hashTable, moduleFile), world) = accFiles (wantModule` moduleFile emptyModificationTime (isIclFile moduleExtension) moduleId.boxed_ident NoPos useGenerics dclCache.hash_table stderr) world
     # dclCache = {dclCache & hash_table = hashTable}
     | not ok =
-        (throw PreparseError, dclCache, world)
+        (throw ParseError, dclCache, world)
 
     # (result, world) = closeFile moduleFile world
     | isErr result =
@@ -165,21 +175,26 @@ preparseModule modulePath dclCache world
         (return parsedModule, dclCache, world)
 
 
-postparseModule :: ParsedModule SearchPaths !*DclCache !*World -> (Usually (ScannedModule, Maybe ScannedModule, [ScannedModule]), *DclCache, *World)
-postparseModule parsedModule searchPaths dclCache world
+/*
+scanModule :: [FilePath] !ParsedModule !*DclCache !*World -> (Usually (ScannedModule, Maybe ScannedModule, [ScannedModule]), *DclCache, *World)
+scanModule filePaths parsedModule dclCache world
 
+    # searchPaths = makeSearchPaths filePaths
     # ((ok, module, globalFunctionsRange, functionDefinitions, optionalDclModule, importedModules, dclCacheIndex, hashTable, _), world) = accFiles (scanModule` parsedModule emptyCachedModuleIdents useGenerics useDynamics dclCache.hash_table stderr searchPaths defaultModificationTimeFunction) world
     # dclCache = {dclCache & hash_table = hashTable}
     | not ok
-        = (throw PostparseError, dclCache, world)
+        = (throw ScanError, dclCache, world)
     | otherwise
         = (return (module, toMaybe optionalDclModule, importedModules), dclCache, world)
+*/
 
-parseModule :: !FilePath SearchPaths !*DclCache !*World -> (Usually (ScannedModule, Maybe ScannedModule, [ScannedModule]), *DclCache, *World)
-parseModule modulePath searchPaths dclCache world
+/*
+parseModule :: SearchPaths !FilePath !*DclCache !*World -> (Usually (ScannedModule, Maybe ScannedModule, [ScannedModule]), *DclCache, *World)
+parseModule searchPaths modulePath dclCache world
 
     # (result, dclCache, world) = preparseModule modulePath dclCache world
     | isErr result
         = (rethrow result, dclCache, world)
     | otherwise
         = postparseModule (unwrap result) searchPaths dclCache world
+*/

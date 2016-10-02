@@ -7,7 +7,7 @@ Global
 		CheckStacks:	False
 		CheckIndexes:	True
 	Application
-		HeapSize:	2097152
+		HeapSize:	20971520
 		StackSize:	512000
 		ExtraMemory:	8192
 		IntialHeapSize:	204800
@@ -48,6 +48,7 @@ Global
 		Path:	{Project}/Dependencies/clean-compiler/main/Unix
 		Path:	{Application}/lib/Generics
 		Path:	{Application}/lib/ArgEnv
+		Path:	{Application}/lib/StdLib
 	Precompile:	
 	Postlink:	
 MainModule
