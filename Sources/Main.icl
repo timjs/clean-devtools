@@ -7,13 +7,7 @@ import Data.Maybe
 import Data.Result
 
 import System.CommandLine
-import Clean.Parser
-
-instance toString Error where
-    toString error = case error of
-        ParseError -> "Clean compiler parse error"
-        ScanError -> "Clean compiler scan error"
-        _ -> "undefined error"
+import Clean.Parse
 
 searchPaths =
     [ "../Sources/"
@@ -30,20 +24,15 @@ searchPaths =
     , "/Applications/Clean/lib/StdEnv/"
     ]
 
-getModuleIdent m = m.mod_ident.id_name
-
 Start world
     # (args, world) = getCommandLine world
     # fileName = args !! 1
-    # (dclCache, world) = initDclCache world
+    # (dclCache, world) = makeDclCache world
     # (result, dclCache, world) = parseModule fileName dclCache world
     | isErr result
         = panic result
-    # parsedModule = unwrap result
     | otherwise
-        = ( getModuleIdent parsedModule
-        , parsedModule.mod_defs
-        )
+        = unwrap result
     /*
     # (result, dclCache, world) = scanModule searchPaths parsedModule dclCache world
     | isErr result
